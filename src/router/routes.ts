@@ -1,10 +1,22 @@
 import { RouteRecordRaw } from 'vue-router'
-import recipes from '../pages/recipes.vue'
-import recipeDetails from '../pages/recipeDetails.vue'
 
 const routes: readonly RouteRecordRaw[] = [
-    { path: '/', component: recipes },
-    { path: '/recipeDetails', component: recipeDetails },
+    { 
+        path: '/', 
+        name: 'home',
+        component: () => import('../pages/recipes.vue') 
+    },
+    { 
+        path: '/recipeDetails/:id', 
+        name: 'recipeDetails',
+        component: () => import('../pages/recipeDetails.vue'), 
+        props: true,
+    },
+    // {
+    //     path: '/:pathMatch(.*)*',
+    //     name: 'NotFound',
+    //     component: () => import('../pages/recipes.vue')
+    // }
 ]
 
 export default routes
