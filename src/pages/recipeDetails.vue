@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper" v-if="foodItem">
-        <div class="food-title">{{ foodItem.title }}</div>
+        <el-card class="food-title">{{ foodItem.title }}</el-card>
         <div class="content">
             <div class="first-half">
                 <img :src=foodItem.image class='food-image' alt="receptImage">
@@ -8,21 +8,25 @@
                     <div class="readyTime"><el-icon><Timer /></el-icon>Cooking time: {{ foodItem.readyInMinutes }} min</div>
                     <div class="dishType">Dish type:<div v-for="dish of foodItem.dishTypes">{{ dish }}</div></div>
                 </div>
-                <div class="desc" v-html="foodItem.summary"></div>
+                <el-card class="desc" v-html="foodItem.summary"></el-card>
             </div>
             <div class="second-half">
-                <ul class="UList">
-                    <li>Necessary ingredients</li>
+                <el-card class="UList">
+                    <template #header>
+                        <li >Necessary ingredients</li>
+                    </template>
                     <li class="ingredients" v-for="(ingredient, index) of foodItem.extendedIngredients">
                         {{ index }} - {{ ingredient.name }}
                     </li>   
-                </ul>
-                <ul class="UList">
-                    <li>Steps:</li>
+                </el-card>
+                <el-card class="UList">
+                    <template #header>
+                        <li>Steps</li>
+                    </template>
                     <li class="steps" v-for="(step, index) of foodItem.analyzedInstructions[0].steps">
                         {{ index }} - {{ step.step }}
                     </li>   
-                </ul>
+                </el-card>
             </div>
         </div>
     </div>
@@ -71,7 +75,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .wrapper{
     height: calc(100% - 50px);
-    width: 100%;
+    width: 98%;
     display:flex;
     flex-direction: column;
     justify-content: center;
@@ -81,8 +85,10 @@ onMounted(() => {
 .food-title{
     height: 15%;
     width: 100%;
-    font-size:larger;
-    text-align: center;
+    font-size:200%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .content{

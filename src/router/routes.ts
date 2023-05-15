@@ -12,11 +12,11 @@ const routes: readonly RouteRecordRaw[] = [
         component: () => import('../pages/recipeDetails.vue'), 
         props: true,
     },
-    // {
-    //     path: '/:pathMatch(.*)*',
-    //     name: 'NotFound',
-    //     component: () => import('../pages/recipes.vue')
-    // }
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: () => import('../pages/errorPage.vue')
+    }
 ]
 
 export default routes

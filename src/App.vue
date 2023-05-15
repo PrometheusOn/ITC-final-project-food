@@ -9,21 +9,11 @@
       <el-icon size="50px">
         <ForkSpoon />
       </el-icon>
-    </el-menu-item>
-    <div 
-    class="input"
-    v-if="route.name === 'home'"
-    >
-      <el-input class='input-find' v-model="input" placeholder="Please input" />
-      <el-button
-      >
-        Find
-      </el-button>
-    </div>
-    
+    </el-menu-item>   
     <el-button 
       class="btnBack"
-      v-if="route.name !== 'home'"
+      v-if="route.name === 'recipeDetails'" 
+      @click="$router.push('/')"
     >
       Back
     </el-button>
@@ -33,10 +23,8 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { ref } from 'vue'
 
 const route = useRoute()
-const input = ref('')
 
 </script>
 
@@ -54,13 +42,6 @@ const input = ref('')
 .bedding{
   height: 50px;
   position: relative;
-}
-
-.input{
-  width: 30%;
-  display: flex;
-  gap: 10px;
-  margin: auto
 }
 
 .btnBack{
