@@ -1,18 +1,18 @@
-# Vue 3 + TypeScript + Vite
+Проект на тему Food.
+![image](https://github.com/PrometheusOn/it-code-hw6-food/assets/113925723/8c5a91d9-204b-405f-90ac-2c4286a0c5d9)
+API с рецептами - https://spoonacular.com/food-api
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Т.к. в API стоит ограничения на 150 запросов, нужно будет менять API key в файле env.development.local
+![image](https://github.com/PrometheusOn/it-code-hw6-food/assets/113925723/e47d94df-f826-4d6b-906a-53c88e90c456)
 
-## Recommended IDE Setup
+Демонстрация работы:
+![image](https://github.com/PrometheusOn/it-code-hw6-food/assets/113925723/e6629194-2758-4dff-b2b5-fbca798125b9)
+![image](https://github.com/PrometheusOn/it-code-hw6-food/assets/113925723/dac4f14e-5089-4a17-a8e0-43867b9ed652)
+![image](https://github.com/PrometheusOn/it-code-hw6-food/assets/113925723/d82461b5-1a49-4e76-b628-0d5833fa3677)
+![image](https://github.com/PrometheusOn/it-code-hw6-food/assets/113925723/798559d0-5d01-4fe8-87ba-dccc5413afbc)
+![image](https://github.com/PrometheusOn/it-code-hw6-food/assets/113925723/2e5b6882-bb16-4770-8d1a-1dd8e4e223c6)
+![image](https://github.com/PrometheusOn/it-code-hw6-food/assets/113925723/c5e1edf5-7ae2-4cad-a630-48778ee419db)
+![image](https://github.com/PrometheusOn/it-code-hw6-food/assets/113925723/a5af7559-499d-4d26-ba14-a04385533903)
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-## Type Support For `.vue` Imports in TS
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
