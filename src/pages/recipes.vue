@@ -5,59 +5,69 @@
             v-model="nameField" 
             placeholder="Please input dish name" 
             clearable 
-            @clear="search" 
+            @clear="debounceSearch"
+            :keyup.enter="search" 
         />
 
         <el-select
             v-model="typeField"
             placeholder="Select type of dish"
             clearable 
-            @clear="search"   
+            @clear="debounceSearch"
+            v-on:keyup.enter="search"   
         >
             <el-option
-                v-for="(item, index) in typeOfDish"
+                v-for="(item, index) in foodsStore.dishTypes"
                 :key="index"
                 :label="item"
                 :value="item"
             />
         </el-select>
-
-        <el-button @click="search">
-            Find
-        </el-button>
     </div>
-    <el-row>
-        <el-col
-            v-for="(food, index) of foods"
-            :key="index"
-            :span="7"
+    <div class="foodsList" v-loading="loading">
+        <el-row 
+            v-if="foods?.length"
+            class="example-demonstration"
         >
-            <el-card :body-style="{ padding: '0px' }">
-                <img
-                    :src=food.image
-                    class="image"
-                />
-                <div style="padding: 14px">
-                    <span class="title">{{ food.title }}</span>
-                    <div class="bottom">
-                        <el-button
-                            text 
-                            class="button" 
-                            @click="router.push({ name: 'recipeDetails', params: { id: food.id }})"
-                        >
-                            More
-                        </el-button>
+            <el-col
+                v-for="(food, index) of foods"
+                :key="index"
+                :span="7"
+                :xs="8"
+            >
+                <el-card :body-style="{ padding: '0px' }" >
+                    <img
+                        :src=food.image
+                        class="image"
+                    />
+                    <div style="padding: 14px">
+                        <span class="title">{{ food.title }}</span>
+                        <div class="bottom">
+                            <el-button
+                                text 
+                                class="button" 
+                                @click="router.push({ name: 'recipeDetails', params: { id: food.id }})"
+                            >
+                                More
+                            </el-button>
+                        </div>
                     </div>
-                </div>
-            </el-card>
-        </el-col>
-    </el-row>
+                </el-card>
+            </el-col>
+        </el-row>
+        <el-empty description="Нет данных" v-else />
+        <el-pagination layout="prev, pager, next" :page-count="Math.ceil(total/foodsPerPage)" v-model:current-page="currentPage" @current-change="scrollToTop"/>
+        
+    </div>
 </template>
   
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { recipesArr, dishTypesArr } from '../store/fakeApi.ts' 
+import { onMounted } from '@vue/runtime-core'
+import { useFoodsStore } from '../stores/foods.ts'
+
+const foodsStore = useFoodsStore()
 
 interface Food {
     id: number,
@@ -66,9 +76,66 @@ interface Food {
     dishTypes: string[],
 }
 
+
+const foodsPerPage = 50
+const currentPage = ref(1)
+const loading = ref(false)
+const total = ref(0)
+
+const scrollToTop = () => {
+    const foodsList = document.querySelector("html");
+    if(foodsList!=null){
+        foodsList.scrollTop = 0;          
+    }
+}
+
+
+// const checkState = () => {
+//     if (foods.value.length) loading.value = false
+//     else if (!foods.value.length) return
+//     else loading.value = true
+// }
+
+const checkTotal = (totalFoods:number) =>{
+    if (totalFoods > 900){
+        return 900
+    } else {
+        return totalFoods
+    }
+}
+
+const load = async () => {
+
+    loading.value = true
+    const { items, total: totalFoods } = await foodsStore.getAll({
+        titleMatch: nameField.value,
+        type: typeField.value,
+        offset: (currentPage.value - 1) * foodsPerPage,
+        number: foodsPerPage,
+    })
+    foods.value = items
+    total.value = checkTotal(totalFoods)
+    loading.value = false
+}
+
+onMounted(async () => {
+    loading.value = true
+    const { items, total: totalFoods } = await foodsStore.getAll({
+        titleMatch: nameField.value,
+        type: typeField.value,
+        offset:0,
+        number:foodsPerPage,
+    })
+
+    foods.value = items
+    total.value = checkTotal(totalFoods)
+    // total.value = totalFoods
+    loading.value = false
+})
+
 const router = useRouter()
-const foods = ref<Food[]>(recipesArr)
-const typeOfDish= ref<string[]>(dishTypesArr)
+const foods = ref<Food[]>([])
+
 
 const nameField = ref('')
 const typeField = ref('')
@@ -80,33 +147,36 @@ interface Food {
     dishTypes: string[],
 }
 
-const filterByTitle = () => {
-    return recipesArr.filter(food => {
-        return food.title.toLowerCase().includes(nameField.value.toLowerCase())
+const search = async () => {
+    loading.value = true
+    currentPage.value = 1
+    const { items, total: totalFoods } = await foodsStore.getAll({
+        titleMatch: nameField.value,
+        type: typeField.value,
+        offset:0,
+        number:50,
     })
+
+    foods.value = items
+    total.value = checkTotal(totalFoods)
+    // total.value = totalFoods
+    loading.value = false
 }
 
-const filterByType = () => {
-    if (!typeField.value)
-        return recipesArr
-    else {
-        return recipesArr.filter(food => food.dishTypes.includes(typeField.value))
+const useDebounce = (func: Function, delay: number) => {
+    let timeoutId: number
+    return ( ...args: any[]) => {
+        clearTimeout(timeoutId)
+        timeoutId = setTimeout(() => func(...args), delay)
     }
 }
+const search_delay_time = 700
+const debounceSearch = useDebounce(search, search_delay_time)
 
-const search = () => {
-    const filteredByTitleFoods = filterByTitle()
-    const filterByTypeFoods = filterByType()
-    const filterResult = filteredByTitleFoods.filter( obj => filterByTypeFoods.indexOf(obj) !== -1)
-    foods.value = filterResult
-}
+watch(nameField, debounceSearch)
+watch(typeField, debounceSearch)
 
-// onMounted(async () => {
-//     // await getAllFoods()
-//     foods.value = [
-//         { }
-//     ]
-// })
+watch(currentPage, load)
 </script>
   
 <style lang="scss" scoped>
@@ -151,5 +221,22 @@ const search = () => {
     width: 40%;
 }
 
+.infinite-list .infinite-list-item {
+    width: 100%;
+    background: var(--el-color-primary-light-9);
+    margin: 10px;
+    color: var(--el-color-primary);
+}
+.infinite-list .infinite-list-item + .list-item {
+    margin-top: 10px;
+}
+
+.empty{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 </style>
   

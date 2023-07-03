@@ -1,16 +1,16 @@
 <template>
-    <div class="wrapper" v-if="foodItem">
-        <el-card class="food-title">{{ foodItem.title }}</el-card>
-        <div class="content">
-            <div class="first-half">
+    <el-row class="wrapper" v-if="foodItem" :span="24">
+        <el-card class="food-title" >{{ foodItem.title }}</el-card>
+        <el-row class="content" :span="24">
+            <el-col class="first-half" :span="12" :xs="24">
                 <img :src=foodItem.image class='food-image' alt="receptImage">
                 <div class="other-info">
                     <div class="readyTime"><el-icon><Timer /></el-icon>Cooking time: {{ foodItem.readyInMinutes }} min</div>
                     <div class="dishType">Dish type:<div v-for="dish of foodItem.dishTypes">{{ dish }}</div></div>
                 </div>
                 <el-card class="desc" v-html="foodItem.summary"></el-card>
-            </div>
-            <div class="second-half">
+            </el-col>
+            <el-col class="second-half" :span="12" :xs="24">
                 <el-card class="UList">
                     <template #header>
                         <li >Necessary ingredients</li>
@@ -27,14 +27,17 @@
                         {{ index }} - {{ step.step }}
                     </li>   
                 </el-card>
-            </div>
-        </div>
-    </div>
+            </el-col>
+        </el-row>
+    </el-row>
+    <div v-else-if="!foodItem" style="height:30vw" v-loading="loading"></div>
 </template>
   
 <script setup lang="ts">
 import { onMounted, ref, Ref } from 'vue'
-import { recipesArr } from '../store/fakeApi.ts'
+import { useFoodsStore } from '../stores/foods.ts'
+
+const foodsStore = useFoodsStore()
 
 const props = defineProps<{
     id: string;
@@ -59,16 +62,10 @@ interface FoodDetail {
     }[]
 }
 
-const findFood = (id: string) => {
-    for (const food of recipesArr){
-        if (food.id === Number(id)) {
-            foodItem.value = food
-        }
-    }
-} 
+const loading = ref(true)
 
-onMounted(() => {
-    findFood(props.id)
+onMounted(async() => {
+    foodItem.value = await foodsStore.getOne(props.id)
 })
 </script>
   
@@ -134,5 +131,8 @@ onMounted(() => {
     height: 60%;
     width: 90%;
 }
+// .example-showcase .el-loading-mask {
+//   z-index: 9;
+// }
 </style>
   
